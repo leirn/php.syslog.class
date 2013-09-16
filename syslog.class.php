@@ -130,7 +130,7 @@ define("LOG_NILVALUE", "-");
 
 define("LOG_FTP", 88);
 define("LOG_NTP", 96);
-define("LOG_AUDIT", 104);
+define("LOG_LOG_AUDIT", 104);
 define("LOG_ALERT", 112);
 define("LOG_CLOCK", 120);
 
