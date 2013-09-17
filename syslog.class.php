@@ -1,12 +1,13 @@
 <?php
 /**
- * Short description for file
- *
- * Long description for file (if any)...
+ *   The Syslog class is a syslog client implementation in PHP
+ *   following the RFC 3164, 5424, 5425, 5426 rules.
+ *   This class is compatible with PHP logger constants for serverity and facility.
+ *   Default value are UDP connection with RFC3164 mode
  *
  * PHP version 5
  *
- * LICENSE:  *   Copyright 2013 Laurent Vromman
+ * LICENSE:
  *   
  *       This program is free software: you can redistribute it and/or modify
  *       it under the terms of the   GNU LesserGeneral Public License as published by
@@ -30,37 +31,95 @@
  * @link       http://pear.php.net/package/Net_Syslog
  */
 
-/*
-* Place includes, constant defines and $_GLOBAL settings here.
-* Make sure they have appropriate docblocks to avoid phpDocumentor
-* construing they are documented by the page-level docblock.
-*/
+
+// {{{ constants
+
+/**
+ * Set default linux network interface
+ */
+define("NET_SYSLOG_LINUX_NETWORD_INTERFACE", "eth0");
+
+/**
+ * Set NILVALUE as defined in RFC 5424
+ */
+define("NET_SYSLOG_NILVALUE", "-");
+
+/**
+ * Add missing LOG_FTP level log to existing PHP log levels
+ */
+defined('LOG_FTP') or define("LOG_FTP", 88);
 
 
 /**
- *
- * Description
- *
- *   The Syslog class is a syslog client implementation in PHP
- *   following the RFC 3164, 5424, 5425, 5426 rules.
- *   This class is compatible with PHP logger constants for serverity and facility.
- *
- *   Default value are UDP connection with RFC3164 mode.
+ * Add missing LOG_NTP level log to existing PHP log levels
+ */
+defined('LOG_NTP') or define("LOG_NTP", 96);
+
+
+/**
+ * Add missing LOG_LOG_AUDIT level log to existing PHP log levels
+ */
+defined('LOG_LOG_AUDIT') or define("LOG_LOG_AUDIT", 104);
+
+
+/**
+ * Add missing LOG_ALERT level log to existing PHP log levels
+ */
+defined('LOG_ALERT') or define("LOG_ALERT", 112);
+
+
+/**
+ * Add missing LOG_CLOCK level log to existing PHP log levels
+ */
+defined('LOG_CLOCK') or define("LOG_CLOCK", 120);
+
+/**
+ * TCP connection mode
+ */
+define("NET_SYSLOG_TCP", "tcp");
+
+/**
+ * UDP connection mode
+ */
+define("NET_SYSLOG_UDP", "udp");
+
+/**
+ * SSL connection mode
+ */
+define("NET_SYSLOG_SSL", "ssl");
+
+/**
+ * TLS connection mode
+ */
+define("NET_SYSLOG_TLS", "tls");
+
+/**
+ * Compatibility for RFC 5424, 5425 and 5426
+ */
+define("NET_SYSLOG_RFC542X", 1);
+
+/**
+ * Compatibility for RFC 3164
+ */
+define("NET_SYSLOG_RFC3164", 0);
+// }}}
+
+/**
  *
  *   Facility values:
  *      LOG_KERN		kernel messages
  *      LOG_USER		user-level messages
  *      LOG_MAIL		mail system
- *      LOG_DAEMON	system daemons
+ *      LOG_DAEMON	    system daemons
  *      LOG_AUTH		security/authorization messages
  *      LOG_SYSLOG		messages generated internally by syslogd
- *      LOG_LPR		line printer subsystem
+ *      LOG_LPR		    line printer subsystem
  *      LOG_NEWS		network news subsystem
  *      LOG_UUCP		UUCP subsystem
  *      LOG_CRON		clock daemon
  *      LOG_AUTHPRIV 	security/authorization messages
  *      LOG_FTP 		FTP daemon
- *      LOG_NTP		NTP subsystem
+ *      LOG_NTP		    NTP subsystem
  *      LOG_AUDIT 		log audit
  *      LOG_LOG_ALERT 	log alert
  *      LOG_CLOCK 		clock daemon
@@ -77,17 +136,17 @@
  *     LOG_EMERG 		Emergency: system is unusable
  *     LOG_ALERT 		Alert: action must be taken immediately
  *     LOG_CRIT 		Critical: critical conditions
- *     LOG_ERR 		Error: error conditions
- *     LOG_WARNING 	Warning: warning conditions
+ *     LOG_ERR 		    Error: error conditions
+ *     LOG_WARNING 	    Warning: warning conditions
  *     LOG_NOTICE 		Notice: normal but significant condition (default value)
  *     LOG_INFO 		Informational: informational messages
  *     LOG_DEBUG 		Debug: debug-level messages
  *
  *   Protocols:
- *     SYSLOG_UDP		udp protocol. Defaut behaviour
- *     SYSLOG_TCP		tcp protocol
- *     SYSLOG_SSL		ssl protocol. CA File can optionnaly be set 
- *     SYSLOG_TLS		tls protocol
+ *     NET_SYSLOG_UDP		udp protocol. Defaut behaviour
+ *     NET_SYSLOG_TCP		tcp protocol
+ *     NET_SYSLOG_SSL		ssl protocol. CA File can optionnaly be set 
+ *     NET_SYSLOG_TLS		tls protocol
  *
  *
  * Usage
@@ -141,43 +200,10 @@
  *     * In Windows, PHP Sockets can be activated by un-commenting
  *       extension=php_sockets.dll in php.ini
  *
- * Licence
- *
- *   Copyright 2013 Laurent Vromman
- *   
- *      This program is free software: you can redistribute it and/or modify
- *       it under the terms of the   GNU LesserGeneral Public License as published by
- *       the Free Software Foundation, either version 3 of the License, or
- *       (at your option) any later version.
- *   
- *       This program is distributed in the hope that it will be useful,
- *       but WITHOUT ANY WARRANTY; without even the implied warranty of
- *       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *       GNU Lesser General Public License for more details.
- *   
- *       You should have received a copy of the GNU General Public License
- *       along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * TODO : RFC 5848, RFC 6587, Permanent socket
  *
  */
- 
-define("NET_SYSLOG_LINUX_NETWORD_INTERFACE", "eth0");
-define("NET_SYSLOG_NILVALUE", "-");
-
-define("LOG_FTP", 88);
-define("LOG_NTP", 96);
-define("LOG_LOG_AUDIT", 104);
-define("LOG_ALERT", 112);
-define("LOG_CLOCK", 120);
-
-define("NET_SYSLOG_TCP", "tcp");
-define("NET_SYSLOG_UDP", "udp");
-define("NET_SYSLOG_SSL", "ssl");
-define("NET_SYSLOG_TLS", "tls");
-// Compatibility for RFC 5424, 5425 and 5426
-define("NET_SYSLOG_RFC542X", 1);
-define("NET_SYSLOG_RFC3164", 0);
  
 /**
  * Short description for class
