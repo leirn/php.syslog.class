@@ -1,5 +1,43 @@
 <?php
 /**
+ * Short description for file
+ *
+ * Long description for file (if any)...
+ *
+ * PHP version 5
+ *
+ * LICENSE:  *   Copyright 2013 Laurent Vromman
+ *   
+ *       This program is free software: you can redistribute it and/or modify
+ *       it under the terms of the   GNU LesserGeneral Public License as published by
+ *       the Free Software Foundation, either version 3 of the License, or
+ *       (at your option) any later version.
+ *   
+ *       This program is distributed in the hope that it will be useful,
+ *       but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *       GNU Lesser General Public License for more details.
+ *   
+ *       You should have received a copy of the GNU General Public License
+ *       along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * @category   Networking
+ * @package    Net_Syslog
+ * @author     Laurent Vromman <laurent@vromman.org>
+ * @copyright  2013 Laurent Vromman
+ * @license    http://www.gnu.org/copyleft/lesser.html  LGPL License 3
+ * @version    SVN: $Id$
+ * @link       http://pear.php.net/package/Net_Syslog
+ */
+
+/*
+* Place includes, constant defines and $_GLOBAL settings here.
+* Make sure they have appropriate docblocks to avoid phpDocumentor
+* construing they are documented by the page-level docblock.
+*/
+
+
+/**
  *
  * Description
  *
@@ -124,8 +162,8 @@
  *
  */
  
-define("LOG_LINUX_NETWORD_INTERFACE", "eth0");
-define("LOG_NILVALUE", "-");
+define("NET_SYSLOG_LINUX_NETWORD_INTERFACE", "eth0");
+define("NET_SYSLOG_NILVALUE", "-");
 
 define("LOG_FTP", 88);
 define("LOG_NTP", 96);
@@ -133,15 +171,28 @@ define("LOG_LOG_AUDIT", 104);
 define("LOG_ALERT", 112);
 define("LOG_CLOCK", 120);
 
-define("SYSLOG_TCP", "tcp");
-define("SYSLOG_UDP", "udp");
-define("SYSLOG_SSL", "ssl");
-define("SYSLOG_TLS", "tls");
+define("NET_SYSLOG_TCP", "tcp");
+define("NET_SYSLOG_UDP", "udp");
+define("NET_SYSLOG_SSL", "ssl");
+define("NET_SYSLOG_TLS", "tls");
 // Compatibility for RFC 5424, 5425 and 5426
-define("SYSLOG_RFC542X", 1);
-define("SYSLOG_RFC3164", 0);
+define("NET_SYSLOG_RFC542X", 1);
+define("NET_SYSLOG_RFC3164", 0);
  
-class Syslog
+/**
+ * Short description for class
+ *
+ * Long description for class (if any)...
+ *
+ * @category   Networking
+ * @package    Net_Syslog
+ * @author     Laurent Vromman <laurent@vromman.org>
+ * @copyright  2013 Laurent Vromman
+ * @license    http://www.gnu.org/copyleft/lesser.html  LGPL License 3
+ * @version    SVN: $Id$
+ * @link       http://pear.php.net/package/Net_Syslog
+ */
+class Net_Syslog
 {
     private $_hostname; // no embedded space, no domain name, only a-z A-Z 0-9 and other authorized characters
     private $_server;    // Syslog destination server
@@ -152,10 +203,10 @@ class Syslog
     private $_procid;
     private $_appname;
 
-    public function Syslog($hostname = "", $appname = LOG_NILVALUE,
-    	$protocol  = SYSLOG_UDP, $procid = LOG_NILVALUE
+    public function Syslog($hostname = "", $appname = NET_SYSLOG_NILVALUE,
+    	$protocol  = NET_SYSLOG_UDP, $procid = NET_SYSLOG_NILVALUE
     ) {
-        $this->_rfc = SYSLOG_RFC3164;
+        $this->_rfc = NET_SYSLOG_RFC3164;
         $this->_socket = FALSE;
         $this->_server   = '127.0.0.1';
         $this->setProcid($procid);
@@ -166,27 +217,27 @@ class Syslog
         if (strlen($hostname) == 0) {
             if (isset($_SERVER["SERVER_NAME"])) {
                 $hostname = $_SERVER["SERVER_NAME"];
-                if($this->_rfc == SYSLOG_RFC3164)
+                if($this->_rfc == NET_SYSLOG_RFC3164)
                     $hostname = substr($hostname, 0, strpos($hostname.".", "."));
             }
             elseif (isset($_SERVER["SERVER_ADDR"])) {
                 $hostname = $_SERVER["SERVER_ADDR"];
             }
             else {
-                if($this->_rfc == SYSLOG_RFC3164)
+                if($this->_rfc == NET_SYSLOG_RFC3164)
                     $hostname = "server";
                 else
-                    $hostname = LOG_NILVALUE;
+                    $hostname = NET_SYSLOG_NILVALUE;
             }
         }
         $this->setHostname($hostname);
 
         $this->setProtocol($protocol);
-        if (!in_array($this->_protocol, array(SYSLOG_UDP, SYSLOG_TCP, SYSLOG_SSL, SYSLOG_TLS))) {
-            $this->_protocol = SYSLOG_UDP;
+        if (!in_array($this->_protocol, array(NET_SYSLOG_UDP, NET_SYSLOG_TCP, NET_SYSLOG_SSL, NET_SYSLOG_TLS))) {
+            $this->_protocol = NET_SYSLOG_UDP;
         }
         // RFC5425
-        if($this->_protocol == SYSLOG_TLS)
+        if($this->_protocol == NET_SYSLOG_TLS)
             $this->_port = 6514;
         else
             $this->_port  = 514;
@@ -204,7 +255,7 @@ class Syslog
                 return gethostbyname(php_uname("n"));
             }
             else {
-                $ifconfig = shell_exec('/sbin/ifconfig '.LOG_LINUX_NETWORD_INTERFACE);
+                $ifconfig = shell_exec('/sbin/ifconfig '.NET_SYSLOG_LINUX_NETWORD_INTERFACE);
                 preg_match('/addr:([\d\.]+)/', $ifconfig, $match);
                 return $match[1];
             }
@@ -219,7 +270,7 @@ class Syslog
     public function setHostname($hostname)
     {
         $this->_hostname = substr($hostname, 0, 255);
-        if(strlen($this->_hostname) == 0) $this->_hostname = LOG_NILVALUE;
+        if(strlen($this->_hostname) == 0) $this->_hostname = NET_SYSLOG_NILVALUE;
     }
 
     public function setServer($server)
@@ -236,7 +287,7 @@ class Syslog
 
     public function setProtocol($protocol)
     {
-        if (in_array($protocol, array(SYSLOG_UDP, SYSLOG_TCP, SYSLOG_SSL, SYSLOG_TLS))) {
+        if (in_array($protocol, array(NET_SYSLOG_UDP, NET_SYSLOG_TCP, NET_SYSLOG_SSL, NET_SYSLOG_TLS))) {
             $this->_protocol = $protocol;
         }
     }
@@ -249,13 +300,13 @@ class Syslog
     public function setProcid($procid)
     {
         $this->_procid  = substr($procid, 0, 128);
-        if(strlen($this->_procid) == 0) $this->_procid = LOG_NILVALUE;
+        if(strlen($this->_procid) == 0) $this->_procid = NET_SYSLOG_NILVALUE;
     }
 
     public function setAppname($appname)
     {
         $this->_appname = substr($appname, 0, 48);
-        if(strlen($this->_appname) == 0) $this->_appname = LOG_NILVALUE;
+        if(strlen($this->_appname) == 0) $this->_appname = NET_SYSLOG_NILVALUE;
     }
         
     private function openSocket ()
@@ -264,7 +315,7 @@ class Syslog
             $this->closeSocket();
         $contextOptions = array();;
         
-        if($this->_protocol == SYSLOG_SSL && $this->_cafile != NULL) {
+        if($this->_protocol == NET_SYSLOG_SSL && $this->_cafile != NULL) {
             //http://php.net/manual/en/context.ssl.php
             $contextOptions = array(
                 'ssl' => array(
@@ -290,7 +341,7 @@ class Syslog
     public function logger3164($priority = 133, $content = "Default content")
     {
         $rfc = $this->_rfc;
-        $this->_rfc = SYSLOG_RFC3164;
+        $this->_rfc = NET_SYSLOG_RFC3164;
         $this->logger($priority, $content);
         $this->_rfc = $rfc;
     }
@@ -299,7 +350,7 @@ class Syslog
     	$msgid = "-", $structured_data = "-"
     ) {
         $rfc = $this->_rfc;
-        $this->_rfc = SYSLOG_RFC542X;
+        $this->_rfc = NET_SYSLOG_RFC542X;
         $this->logger($priority, $content, $msgid = "-", $structured_data);
         $this->_rfc = $rfc;
     }
@@ -309,8 +360,8 @@ class Syslog
     ) {
         $this->_content = $content;
         
-        if(strlen($msgid) == 0) $msgid = LOG_NILVALUE;
-        if(strlen($structured_data) == 0) $structured_data = LOG_NILVALUE;
+        if(strlen($msgid) == 0) $msgid = NET_SYSLOG_NILVALUE;
+        if(strlen($structured_data) == 0) $structured_data = NET_SYSLOG_NILVALUE;
         
         $facility = floor($priority/8);
         $severity = $priority - $facility * 8;
@@ -325,7 +376,7 @@ class Syslog
         $timestamp = date("c");
         
         $pri    = "<$priority>";
-        if($this->_rfc == SYSLOG_RFC542X) {
+        if($this->_rfc == NET_SYSLOG_RFC542X) {
             $timestamp = date("c");
             $syslog_version = "1 ";
         }
@@ -335,7 +386,7 @@ class Syslog
             $syslog_version = "";
         }
         $header = $pri.$syslog_version.$timestamp." ".$this->_hostname." ";
-        if($this->_rfc == SYSLOG_RFC542X) {
+        if($this->_rfc == NET_SYSLOG_RFC542X) {
             $header .= $this->_appname." ".$this->_procid." ".substr($msgid, 0, 32);
             $message = $header. " ".$structured_data." ".$content;
         }
@@ -350,7 +401,7 @@ class Syslog
             $this->openSocket();
             
             // RFC 5425
-            if($this->_rfc == SYSLOG_RFC542X && $this->protocol == SYSLOG_TLS) {
+            if($this->_rfc == NET_SYSLOG_RFC542X && $this->protocol == NET_SYSLOG_TLS) {
                 $message = strlen($message)." ".$message;
         }
         
