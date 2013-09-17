@@ -141,7 +141,8 @@ define("SYSLOG_TLS", "tls");
 define("SYSLOG_RFC542X", 1);
 define("SYSLOG_RFC3164", 0);
  
-class Syslog {
+class Syslog
+{
     private $_hostname; // no embedded space, no domain name, only a-z A-Z 0-9 and other authorized characters
     private $_server;    // Syslog destination server
     private $_port;       // Standard syslog port is 514 or 6514 for RFC 5425 (TLS)
@@ -151,7 +152,9 @@ class Syslog {
     private $_procid;
     private $_appname;
 
-    public function Syslog($hostname = "", $appname = LOG_NILVALUE, $protocol  = SYSLOG_UDP, $procid = LOG_NILVALUE) {
+    public function Syslog($hostname = "", $appname = LOG_NILVALUE,
+    	$protocol  = SYSLOG_UDP, $procid = LOG_NILVALUE
+    ) {
         $this->_rfc = SYSLOG_RFC3164;
         $this->_socket = FALSE;
         $this->_server   = '127.0.0.1';
@@ -189,7 +192,8 @@ class Syslog {
             $this->_port  = 514;
     }
 
-    private function getServerAddress() {
+    private function getServerAddress()
+    {
         if(array_key_exists('SERVER_ADDR', $_SERVER))
             return $_SERVER['SERVER_ADDR'];
         elseif(array_key_exists('LOCAL_ADDR', $_SERVER))
@@ -207,46 +211,55 @@ class Syslog {
         }
     }
 
-    public function setRFC($rfc) {
+    public function setRFC($rfc)
+    {
         $this->_rfc = $rfc;
     }
 
-    public function setHostname($hostname) {
+    public function setHostname($hostname)
+    {
         $this->_hostname = substr($hostname, 0, 255);
         if(strlen($this->_hostname) == 0) $this->_hostname = LOG_NILVALUE;
     }
 
-    public function setServer($server) {
+    public function setServer($server)
+    {
         $this->_server = $server;
     }
 
-    public function setPort($port) {
+    public function setPort($port)
+    {
         if ((intval($port) > 0) && (intval($port) < 65536)) {
         $this->_port = intval($port);
         }
     }
 
-    public function setProtocol($protocol) {
+    public function setProtocol($protocol)
+    {
         if (in_array($protocol, array(SYSLOG_UDP, SYSLOG_TCP, SYSLOG_SSL, SYSLOG_TLS))) {
             $this->_protocol = $protocol;
         }
     }
 
-    public function setCAFile($cafile) {
+    public function setCAFile($cafile)
+    {
         $this->_cafile = $cafile;
     }
 
-    public function setProcid($procid) {
+    public function setProcid($procid)
+    {
         $this->_procid  = substr($procid, 0, 128);
         if(strlen($this->_procid) == 0) $this->_procid = LOG_NILVALUE;
     }
 
-    public function setAppname($appname) {
+    public function setAppname($appname)
+    {
         $this->_appname = substr($appname, 0, 48);
         if(strlen($this->_appname) == 0) $this->_appname = LOG_NILVALUE;
     }
         
-    private function openSocket () {
+    private function openSocket ()
+    {
         if ($this->_socket)
             $this->closeSocket();
         $contextOptions = array();;
@@ -268,26 +281,32 @@ class Syslog {
         }
     }
 	
-    private function closeSocket () {
+    private function closeSocket ()
+    {
         fclose($this->_socket);
         $this->_socket = NULL;
     }
         
-    public function logger3164($priority = 133, $content = "Default content") {
+    public function logger3164($priority = 133, $content = "Default content")
+    {
         $rfc = $this->_rfc;
         $this->_rfc = SYSLOG_RFC3164;
         $this->logger($priority, $content);
         $this->_rfc = $rfc;
     }
         
-    public function logger542X($priority = 133, $content = "Default content", $msgid = "-", $structured_data = "-") {
+    public function logger542X($priority = 133, $content = "Default content",
+    	$msgid = "-", $structured_data = "-"
+    ) {
         $rfc = $this->_rfc;
         $this->_rfc = SYSLOG_RFC542X;
         $this->logger($priority, $content, $msgid = "-", $structured_data);
         $this->_rfc = $rfc;
     }
 	
-    public function logger($priority = 133, $content = "Default content", $msgid = "-", $structured_data = "-") {
+    public function logger($priority = 133, $content = "Default content",
+    	$msgid = "-", $structured_data = "-"
+    ) {
         $this->_content = $content;
         
         if(strlen($msgid) == 0) $msgid = LOG_NILVALUE;
