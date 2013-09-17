@@ -219,21 +219,79 @@ class Net_Syslog
 {
     /**
      * Sender hostname
+     * 
      * No domain name, only a-z A-Z 0-9 and other authorized characters
      * 
-     * @acess private
+     * @access private
      * @var string
      */
     private $_hostname;
-    private $_server;    // Syslog destination server
-    private $_port;       // Standard syslog port is 514 or 6514 for RFC 5425 (TLS)
-    private $_protocol;  // Allow to specify between udp, tcp, ssl and tls
+
+    /**
+     * Syslog remote server address
+     * 
+     * @access private
+     * @var string
+     */
+    private $_server;
+
+    /**
+     * Syslog remote server port
+     * 
+     * Standard syslog port is 514 or 6514 for RFC 5425 (TLS)
+     * 
+     * @access private
+     * @var integer
+     */
+    private $_port;
+
+    /**
+     * Protocol to syslog server
+     * 
+     * Allowed values are :
+     *  - NET_SYSLOG_UDP : UDP
+     *  - NET_SYSLOG_TCP : TCP
+     *  - NET_SYSLOG_SSL : SSL
+     *  - NET_SYSLOG_TLS : TLS
+     * 
+     * @access private
+     * @var string
+     */
+    private $_protocol;
+
+    /**
+     * Socket used by class
+     * 
+     * @access private
+     * @var object
+     */
     private $_socket;
+
+    /**
+     * filename for CA Certificate used in SSL connection, if necessary
+     * 
+     * @access private
+     * @var string
+     */
     private $_cafile;
+
+    /**
+     * ProcID as defined in RFC 5424
+     * 
+     * @access private
+     * @var string
+     */
     private $_procid;
+
+    /**
+     * AppName as defined in RFC 5424
+     * 
+     * @access private
+     * @var string
+     */
     private $_appname;
 
-    public function Syslog($hostname = "", $appname = NET_SYSLOG_NILVALUE,
+    public function Net_Syslog($hostname = "", $appname = NET_SYSLOG_NILVALUE,
     	$protocol  = NET_SYSLOG_UDP, $procid = NET_SYSLOG_NILVALUE
     ) {
         $this->_rfc = NET_SYSLOG_RFC3164;
