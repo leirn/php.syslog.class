@@ -51,12 +51,12 @@
  * Usage
  *
  *   require_once('syslog.class.php');
- *   $syslog = new Net_Syslog($hostname = "", $appname = NET_SYSLOG_NILVALUE, $protocol  = NET_SYSLOG_UDP,
- * 	$_procid = NET_SYSLOG_NILVALUE);
+ *   $syslog = new Net_Syslog($hostname = "", $appname = NET_SYSLOG_NILVALUE,
+ *    $protocol  = NET_SYSLOG_UDP, $_procid = NET_SYSLOG_NILVALUE);
  *   $syslog->logger($priority = LOG_LOCAL0 + LOG_NOTICE, $content = "");
  *      or
- *  $syslog->logger542X($priority = 133, $content = "Default content", $msgid = NET_SYSLOG_NILVALUE,
- * 	$structured_data = NET_SYSLOG_NILVALUE);
+ *  $syslog->logger542X($priority = 133, $content = "Default content", 
+ *      $msgid = NET_SYSLOG_NILVALUE, $structured_data = NET_SYSLOG_NILVALUE);
  *      or
  *  $syslog->logger3164($priority = 133, $content = "Default content");
  *
@@ -121,13 +121,12 @@
  *       You should have received a copy of the GNU General Public License
  *       along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @category   Networking
- * @package    Net_Syslog
- * @author     Laurent Vromman <laurent@vromman.org>
- * @copyright  2013 Laurent Vromman
- * @license    http://www.gnu.org/copyleft/lesser.html  LGPL License 3
- * @version    SVN: $Id$
- * @link       http://pear.php.net/package/Net_Syslog
+ * @category  Networking
+ * @package   Net_Syslog
+ * @author    Laurent Vromman <laurent@vromman.org>
+ * @copyright 2013 Laurent Vromman
+ * @license   http://www.gnu.org/copyleft/lesser.html  LGPL License 3
+ * @link      http://pear.php.net/package/Net_Syslog
  */
 
 
@@ -218,7 +217,14 @@ define("NET_SYSLOG_RFC3164", 0);
  */
 class Net_Syslog
 {
-    private $_hostname; // no embedded space, no domain name, only a-z A-Z 0-9 and other authorized characters
+    /**
+     * Sender hostname
+     * No domain name, only a-z A-Z 0-9 and other authorized characters
+     * 
+     * @acess private
+     * @var string
+     */
+    private $_hostname;
     private $_server;    // Syslog destination server
     private $_port;       // Standard syslog port is 514 or 6514 for RFC 5425 (TLS)
     private $_protocol;  // Allow to specify between udp, tcp, ssl and tls
@@ -257,7 +263,10 @@ class Net_Syslog
         $this->setHostname($hostname);
 
         $this->setProtocol($protocol);
-        if (!in_array($this->_protocol, array(NET_SYSLOG_UDP, NET_SYSLOG_TCP, NET_SYSLOG_SSL, NET_SYSLOG_TLS))) {
+        if (!in_array($this->_protocol, 
+            array(NET_SYSLOG_UDP, NET_SYSLOG_TCP, NET_SYSLOG_SSL, NET_SYSLOG_TLS)
+            )
+        ) {
             $this->_protocol = NET_SYSLOG_UDP;
         }
         // RFC5425
@@ -349,7 +358,13 @@ class Net_Syslog
         }
         $sslContext = stream_context_create($contextOptions);
         
-        $this->_socket = stream_socket_client($this->_protocol."://".$this->_server.":".$this->_port, $errno, $errstr, ini_get("default_socket_timeout"), STREAM_CLIENT_CONNECT, $sslContext);
+        $this->_socket = stream_socket_client(
+            $this->_protocol."://".$this->_server.":".$this->_port, 
+            $errno, 
+            $errstr, 
+            ini_get("default_socket_timeout"), 
+            STREAM_CLIENT_CONNECT, 
+            $sslContext);
         
         if (!$this->_socket) {
             throw new Exception("ERROR: $errno - $errstr");
@@ -406,7 +421,9 @@ class Net_Syslog
         }
         else {
             $actualtime = time();
-            $timestamp  = date("M ", $actualtime).substr(date(" j", $actualtime), -2).date(" H:i:s", $actualtime);
+            $timestamp  = date("M ", $actualtime)
+                .substr(date(" j", $actualtime), -2)
+                .date(" H:i:s", $actualtime);
             $syslog_version = "";
         }
         $header = $pri.$syslog_version.$timestamp." ".$this->_hostname." ";
