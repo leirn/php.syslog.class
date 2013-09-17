@@ -4,6 +4,105 @@
  *   following the RFC 3164, 5424, 5425, 5426 rules.
  *   This class is compatible with PHP logger constants for serverity and facility.
  *   Default value are UDP connection with RFC3164 mode
+ * 
+ *  Facility values:
+ *      LOG_KERN		kernel messages
+ *      LOG_USER		user-level messages
+ *      LOG_MAIL		mail system
+ *      LOG_DAEMON	    system daemons
+ *      LOG_AUTH		security/authorization messages
+ *      LOG_SYSLOG		messages generated internally by syslogd
+ *      LOG_LPR		    line printer subsystem
+ *      LOG_NEWS		network news subsystem
+ *      LOG_UUCP		UUCP subsystem
+ *      LOG_CRON		clock daemon
+ *      LOG_AUTHPRIV 	security/authorization messages
+ *      LOG_FTP 		FTP daemon
+ *      LOG_NTP		    NTP subsystem
+ *      LOG_AUDIT 		log audit
+ *      LOG_LOG_ALERT 	log alert
+ *      LOG_CLOCK 		clock daemon
+ *      LOG_LOCAL0 		local user 0 (local0) (default value)
+ *      LOG_LOCAL1 		local user 1 (local1)
+ *      LOG_LOCAL2 		local user 2 (local2)
+ *      LOG_LOCAL3 		local user 3 (local3)
+ *      LOG_LOCAL4 		local user 4 (local4)
+ *      LOG_LOCAL5 		local user 5 (local5)
+ *      LOG_LOCAL6 		local user 6 (local6)
+ *      LOG_LOCAL7 		local user 7 (local7)
+ *
+ *   Severity values:
+ *     LOG_EMERG 		Emergency: system is unusable
+ *     LOG_ALERT 		Alert: action must be taken immediately
+ *     LOG_CRIT 		Critical: critical conditions
+ *     LOG_ERR 		    Error: error conditions
+ *     LOG_WARNING 	    Warning: warning conditions
+ *     LOG_NOTICE 		Notice: normal but significant condition (default value)
+ *     LOG_INFO 		Informational: informational messages
+ *     LOG_DEBUG 		Debug: debug-level messages
+ *
+ *   Protocols:
+ *     NET_SYSLOG_UDP		udp protocol. Defaut behaviour
+ *     NET_SYSLOG_TCP		tcp protocol
+ *     NET_SYSLOG_SSL		ssl protocol. CA File can optionnaly be set 
+ *     NET_SYSLOG_TLS		tls protocol
+ *
+ *
+ * Usage
+ *
+ *   require_once('syslog.class.php');
+ *   $syslog = new Net_Syslog($hostname = "", $appname = NET_SYSLOG_NILVALUE, $protocol  = NET_SYSLOG_UDP,
+ * 	$_procid = NET_SYSLOG_NILVALUE);
+ *   $syslog->logger($priority = LOG_LOCAL0 + LOG_NOTICE, $content = "");
+ *      or
+ *  $syslog->logger542X($priority = 133, $content = "Default content", $msgid = NET_SYSLOG_NILVALUE,
+ * 	$structured_data = NET_SYSLOG_NILVALUE);
+ *      or
+ *  $syslog->logger3164($priority = 133, $content = "Default content");
+ *
+ * Examples
+ *
+ *   Example 1
+ *
+ *         require_once('syslog.class.php');
+ *         $syslog = new Net_Syslog();
+ *         $syslog->logger(LOG_LOCAL0 + LOG_NOTICE, 'Syslog message');
+ *
+ *
+ *   Example 2
+ *
+ *         require_once('syslog.class.php');
+ *         $syslog = new Net_Syslog('myserver', 'MyApp', NET_SYSLOG_TCP);
+ *         $syslog->logger(LOG_LOCAL0 + LOG_NOTICE, 'Syslog message');
+ * 
+ *
+ *   Example 3
+ *
+ *         require_once('syslog.class.php');
+ *         $syslog = new Net_Syslog();
+ *         $syslog->setHostname('myserver');
+ *         $syslog->setRFC(NET_SYSLOG_RFC542X);
+ *         $syslog->setAppname('MyApp');
+ *         $syslog->setServer('192.168.0.12');
+ *         $syslog->logger(LOG_LOCAL0 + LOG_NOTICE, 'Syslog message');
+ *
+ *   Example 4
+ *
+ *         require_once('syslog.class.php');
+ *         $syslog = new Net_Syslog("myserver", "MyApp", NET_SYSLOG_SSL);
+ *         $syslog->setCAFile("ca.crt");
+ *         $syslog->logger(LOG_CRON + LOG_NOTICE, "Syslog message");
+ *
+ * Prerequisites
+ *
+ *   - Sockets support must be enabled.
+ *     * In Linux and *nix environments, the extension is enabled at
+ *       compile time using the --enable-sockets configure option
+ *     * In Windows, PHP Sockets can be activated by un-commenting
+ *       extension=php_sockets.dll in php.ini
+ *
+ *
+ * TODO : RFC 5848, RFC 6587, Permanent socket
  *
  * PHP version 5
  *
@@ -104,107 +203,6 @@ define("NET_SYSLOG_RFC542X", 1);
 define("NET_SYSLOG_RFC3164", 0);
 // }}}
 
-/**
- *
- *   Facility values:
- *      LOG_KERN		kernel messages
- *      LOG_USER		user-level messages
- *      LOG_MAIL		mail system
- *      LOG_DAEMON	    system daemons
- *      LOG_AUTH		security/authorization messages
- *      LOG_SYSLOG		messages generated internally by syslogd
- *      LOG_LPR		    line printer subsystem
- *      LOG_NEWS		network news subsystem
- *      LOG_UUCP		UUCP subsystem
- *      LOG_CRON		clock daemon
- *      LOG_AUTHPRIV 	security/authorization messages
- *      LOG_FTP 		FTP daemon
- *      LOG_NTP		    NTP subsystem
- *      LOG_AUDIT 		log audit
- *      LOG_LOG_ALERT 	log alert
- *      LOG_CLOCK 		clock daemon
- *      LOG_LOCAL0 		local user 0 (local0) (default value)
- *      LOG_LOCAL1 		local user 1 (local1)
- *      LOG_LOCAL2 		local user 2 (local2)
- *      LOG_LOCAL3 		local user 3 (local3)
- *      LOG_LOCAL4 		local user 4 (local4)
- *      LOG_LOCAL5 		local user 5 (local5)
- *      LOG_LOCAL6 		local user 6 (local6)
- *      LOG_LOCAL7 		local user 7 (local7)
- *
- *   Severity values:
- *     LOG_EMERG 		Emergency: system is unusable
- *     LOG_ALERT 		Alert: action must be taken immediately
- *     LOG_CRIT 		Critical: critical conditions
- *     LOG_ERR 		    Error: error conditions
- *     LOG_WARNING 	    Warning: warning conditions
- *     LOG_NOTICE 		Notice: normal but significant condition (default value)
- *     LOG_INFO 		Informational: informational messages
- *     LOG_DEBUG 		Debug: debug-level messages
- *
- *   Protocols:
- *     NET_SYSLOG_UDP		udp protocol. Defaut behaviour
- *     NET_SYSLOG_TCP		tcp protocol
- *     NET_SYSLOG_SSL		ssl protocol. CA File can optionnaly be set 
- *     NET_SYSLOG_TLS		tls protocol
- *
- *
- * Usage
- *
- *   require_once('syslog.class.php');
- *   $syslog = new Syslog($hostname = "", $appname = LOG_NILVALUE, $protocol  = SYSLOG_UDP, $_procid = LOG_NILVALUE);
- *   $syslog->logger($priority = LOG_LOCAL0 + LOG_NOTICE, $content = "");
- *      or
- *  $syslog->logger542X($priority = 133, $content = "Default content", $msgid = "-", $structured_data = "-");
- *      or
- *  $syslog->logger3164($priority = 133, $content = "Default content");
- *
- * Examples
- *
- *   Example 1
- *
- *         require_once('syslog.class.php');
- *         $syslog = new Syslog();
- *         $syslog->logger(LOG_LOCAL0 + LOG_NOTICE, 'Syslog message');
- *
- *
- *   Example 2
- *
- *         require_once('syslog.class.php');
- *         $syslog = new Syslog('myserver', 'MyApp', SYSLOG_TCP);
- *         $syslog->logger(LOG_LOCAL0 + LOG_NOTICE, 'Syslog message');
- * 
- *
- *   Example 3
- *
- *         require_once('syslog.class.php');
- *         $syslog = new Syslog();
- *         $syslog->setHostname('myserver');
- *         $syslog->setRFC(SYSLOG_RFC542X);
- *         $syslog->setAppname('MyApp');
- *         $syslog->setServer('192.168.0.12');
- *         $syslog->logger(LOG_LOCAL0 + LOG_NOTICE, 'Syslog message');
- *
- *   Example 4
- *
- *         require_once('syslog.class.php');
- *         $syslog = new Syslog("myserver", "MyApp", SYSLOG_SSL);
- *         $syslog->setCAFile("ca.crt");
- *         $syslog->logger(LOG_CRON + LOG_NOTICE, "Syslog message");
- *
- * Prerequisites
- *
- *   - Sockets support must be enabled.
- *     * In Linux and *nix environments, the extension is enabled at
- *       compile time using the --enable-sockets configure option
- *     * In Windows, PHP Sockets can be activated by un-commenting
- *       extension=php_sockets.dll in php.ini
- *
- *
- * TODO : RFC 5848, RFC 6587, Permanent socket
- *
- */
- 
 /**
  * Short description for class
  *
