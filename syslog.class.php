@@ -291,6 +291,17 @@ class Net_Syslog
      */
     private $_appname;
 
+    /**
+     * Constructor of class
+     * 
+     * @param string $hostname         Optional. Sender hostname.
+     * @param string $appname          Optional. AppName as defined in RFC 5424.
+     * @param string $protocol         Optional. Can be NET_SYSLOG_UDP, NET_SYSLOG_TCP, NET_SYSLOG_SSL or NET_SYSLOG_TLS.
+     * @param string $procid           Optional. ProcID as defined in RFC 5424.
+     * 
+     * @access public
+     * @see Net_Syslog
+     */
     public function Net_Syslog($hostname = "", $appname = NET_SYSLOG_NILVALUE,
     	$protocol  = NET_SYSLOG_UDP, $procid = NET_SYSLOG_NILVALUE
     ) {
@@ -334,6 +345,13 @@ class Net_Syslog
             $this->_port  = 514;
     }
 
+    /**
+     * Function to get local server address when not available
+     * 
+     * @return string    Local server address
+     * 
+     * @access private
+     */
     private function getServerAddress()
     {
         if(array_key_exists('SERVER_ADDR', $_SERVER))
@@ -501,6 +519,15 @@ class Net_Syslog
         $this->_socket = NULL;
     }
         
+    /**
+     * Function to send a log message RFC3164 compliant
+     * 
+     * @param int    $priority Optional. Priority of message. Is a sum of Severity and Criticity.
+     * @param string $content  Optional. Message content.
+     * 
+     * @access public
+     * @see Net_Syslog
+     */
     public function logger3164($priority = 133, $content = "Default content")
     {
         $rfc = $this->_rfc;
@@ -509,6 +536,17 @@ class Net_Syslog
         $this->_rfc = $rfc;
     }
         
+    /**
+     * Function to send a log message RFC542X compliant
+     * 
+     * @param int    $priority         Optional. Priority of message. Is a sum of Severity and Criticity.
+     * @param string $content          Optional. Message content.
+     * @param string $msgid            Optional. MsgID of the message, according to RFC5424.
+     * @param string $structured_data  Optional. Structured data of the message, according to RFC5424.
+     * 
+     * @access public
+     * @see Net_Syslog
+     */
     public function logger542X($priority = 133, $content = "Default content",
     	$msgid = "-", $structured_data = "-"
     ) {
@@ -518,6 +556,17 @@ class Net_Syslog
         $this->_rfc = $rfc;
     }
 	
+    /**
+     * Function to send a log message. RFC3164 or 542X chosen according to $_rfc parameter.
+     * 
+     * @param int    $priority         Optional. Priority of message. Is a sum of Severity and Criticity.
+     * @param string $content          Optional. Message content.
+     * @param string $msgid            Optional. MsgID of the message, according to RFC5424. Ignored in RFC3164 mode.
+     * @param string $structured_data  Optional. Structured data of the message, according to RFC5424. Ignored in RFC3164 mode.
+     * 
+     * @access public
+     * @see Net_Syslog
+     */
     public function logger($priority = 133, $content = "Default content",
     	$msgid = "-", $structured_data = "-"
     ) {
