@@ -353,22 +353,50 @@ class Net_Syslog
         }
     }
 
+    /**
+     * RFC Mode setter
+     * 
+     * @param int    $rfc The RFC mode. Can be NET_SYSLOG_RFC542X or NET_SYSLOG_RFC3164
+     * 
+     * @access public
+     */
     public function setRFC($rfc)
     {
         $this->_rfc = $rfc;
     }
 
+    /**
+     * Sender hostname setter
+     * 
+     * @param string    $hostname No domain name, only a-z A-Z 0-9 and other authorized characters
+     * 
+     * @access public
+     */
     public function setHostname($hostname)
     {
         $this->_hostname = substr($hostname, 0, 255);
         if(strlen($this->_hostname) == 0) $this->_hostname = NET_SYSLOG_NILVALUE;
     }
 
+    /**
+     * Remote server address setter
+     * 
+     * @param string    $server Can be an ip or a network name
+     * 
+     * @access public
+     */
     public function setServer($server)
     {
         $this->_server = $server;
     }
 
+    /**
+     * Remote server port setter
+     * 
+     * @param int      $port TCP or UDP port on the remote syslog server
+     * 
+     * @access public
+     */
     public function setPort($port)
     {
         if ((intval($port) > 0) && (intval($port) < 65536)) {
@@ -376,6 +404,13 @@ class Net_Syslog
         }
     }
 
+    /**
+     * Protocol setter
+     * 
+     * @param string   $protocol Can be NET_SYSLOG_UDP, NET_SYSLOG_TCP, NET_SYSLOG_SSL or NET_SYSLOG_TLS
+     * 
+     * @access public
+     */
     public function setProtocol($protocol)
     {
         if (in_array($protocol, array(NET_SYSLOG_UDP, NET_SYSLOG_TCP, NET_SYSLOG_SSL, NET_SYSLOG_TLS))) {
@@ -383,23 +418,49 @@ class Net_Syslog
         }
     }
 
+    /**
+     * CA File setter
+     * 
+     * @param string   $cafile Filename for CA Certificate used in SSL connection, if necessary
+     * 
+     * @access public
+     */
     public function setCAFile($cafile)
     {
         $this->_cafile = $cafile;
     }
 
+    /**
+     * ProcID setter
+     * 
+     * @param string   $procid ProcID as defined in RFC 5424
+     * 
+     * @access public
+     */
     public function setProcid($procid)
     {
         $this->_procid  = substr($procid, 0, 128);
         if(strlen($this->_procid) == 0) $this->_procid = NET_SYSLOG_NILVALUE;
     }
 
+    /**
+     * AppName setter
+     * 
+     * @param string   $appname AppName as defined in RFC 5424
+     * 
+     * @access public
+     */
     public function setAppname($appname)
     {
         $this->_appname = substr($appname, 0, 48);
         if(strlen($this->_appname) == 0) $this->_appname = NET_SYSLOG_NILVALUE;
     }
         
+    /**
+     * Open the socket to connect to the remote syslog server
+     * 
+     * @access private
+     */
     private function openSocket ()
     {
         if ($this->_socket)
@@ -429,6 +490,11 @@ class Net_Syslog
         }
     }
 	
+    /**
+     * Close the socket to the remote syslog server
+     * 
+     * @access private
+     */
     private function closeSocket ()
     {
         fclose($this->_socket);
