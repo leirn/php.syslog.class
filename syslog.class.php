@@ -2,7 +2,7 @@
 /**
  *   The Syslog class is a syslog client implementation in PHP
  *   following the RFC 3164, 5424, 5425, 5426 rules.
- *   This class is compatible with PHP logger constants for serverity and facility.
+ *   This class is compatible with PHP logger constants for severity and facility.
  *   Default value are UDP connection with RFC3164 mode
  * 
  *  Facility values:
