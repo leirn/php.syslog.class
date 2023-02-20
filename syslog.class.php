@@ -615,7 +615,7 @@ class Net_Syslog
             $this->openSocket();
             
             // RFC 5425
-            if($this->_rfc == NET_SYSLOG_RFC542X && $this->protocol == NET_SYSLOG_TLS) {
+            if($this->_rfc == NET_SYSLOG_RFC542X && $this->_protocol == NET_SYSLOG_TLS) {
                 $message = strlen($message)." ".$message;
         }
         
