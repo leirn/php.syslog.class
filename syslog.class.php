@@ -302,7 +302,7 @@ class Net_Syslog
      * @access public
      * @see Net_Syslog
      */
-    public function Net_Syslog($hostname = "", $appname = NET_SYSLOG_NILVALUE,
+    public function __construct($hostname = "", $appname = NET_SYSLOG_NILVALUE,
     	$protocol  = NET_SYSLOG_UDP, $procid = NET_SYSLOG_NILVALUE
     ) {
         $this->_rfc = NET_SYSLOG_RFC3164;
