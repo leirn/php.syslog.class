@@ -302,7 +302,7 @@ class Net_Syslog
      * @access public
      * @see Net_Syslog
      */
-    public function Net_Syslog($hostname = "", $appname = NET_SYSLOG_NILVALUE,
+    public function __construct($hostname = "", $appname = NET_SYSLOG_NILVALUE,
     	$protocol  = NET_SYSLOG_UDP, $procid = NET_SYSLOG_NILVALUE
     ) {
         $this->_rfc = NET_SYSLOG_RFC3164;
@@ -615,7 +615,7 @@ class Net_Syslog
             $this->openSocket();
             
             // RFC 5425
-            if($this->_rfc == NET_SYSLOG_RFC542X && $this->protocol == NET_SYSLOG_TLS) {
+            if($this->_rfc == NET_SYSLOG_RFC542X && $this->_protocol == NET_SYSLOG_TLS) {
                 $message = strlen($message)." ".$message;
         }
         
