@@ -610,13 +610,13 @@ class Net_Syslog
             if(strlen($this->_appname) > 0)
                 $tag = substr($this->_appname, 0 , 32).": ";
                 $message = substr($header.$tag.$content, 0, 1024);
-            }
+        }
             
-            $this->openSocket();
+        $this->openSocket();
             
-            // RFC 5425
-            if($this->_rfc == NET_SYSLOG_RFC542X && $this->_protocol == NET_SYSLOG_TLS) {
-                $message = strlen($message)." ".$message;
+        // RFC 5425
+        if($this->_rfc == NET_SYSLOG_RFC542X && $this->_protocol == NET_SYSLOG_TLS) {
+            $message = strlen($message)." ".$message;
         }
         
         fwrite($this->_socket, $message);
